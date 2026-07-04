@@ -4,22 +4,25 @@ import {
   EditOutlined,
   UnorderedListOutlined,
   PieChartOutlined,
-  TagsOutlined
+  TagsOutlined,
+  BuildOutlined
 } from '@ant-design/icons'
 import AddExpense from './pages/AddExpense'
 import ExpenseList from './pages/ExpenseList'
 import MonthlyStats from './pages/MonthlyStats'
 import CategoryManage from './pages/CategoryManage'
+import SokobanGame from './pages/SokobanGame'
 
 const { Sider, Content, Header } = Layout
 
-type PageKey = 'add' | 'list' | 'stats' | 'categories'
+type PageKey = 'add' | 'list' | 'stats' | 'categories' | 'game'
 
 const menuItems = [
   { key: 'add', icon: <EditOutlined />, label: '记一笔' },
   { key: 'list', icon: <UnorderedListOutlined />, label: '账单列表' },
   { key: 'stats', icon: <PieChartOutlined />, label: '月度统计' },
-  { key: 'categories', icon: <TagsOutlined />, label: '分类管理' }
+  { key: 'categories', icon: <TagsOutlined />, label: '分类管理' },
+  { key: 'game', icon: <BuildOutlined />, label: '推箱子' }
 ]
 
 function App(): JSX.Element {
@@ -35,6 +38,8 @@ function App(): JSX.Element {
         return <MonthlyStats />
       case 'categories':
         return <CategoryManage />
+      case 'game':
+        return <SokobanGame />
       default:
         return <AddExpense onSuccess={() => setCurrentPage('list')} />
     }
