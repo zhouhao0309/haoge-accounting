@@ -1,0 +1,30 @@
+# 第三方依赖（太大了，npm install 可恢复）
+node_modules/
+
+# Rust 编译产物（cargo build 可恢复）
+src-tauri/target/
+
+# 前端编译产物（npm run build 可恢复）
+out/
+
+# 可执行文件和库（cargo build 可恢复）
+*.exe
+*.dll
+*.so
+*.dylib
+
+# 打包产物
+release/
+浩哥记账/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE 配置
+.vscode/
+.idea/
+
+# 临时文件
+*.log
+*.tmp

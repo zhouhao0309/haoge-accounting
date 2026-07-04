@@ -1,0 +1,2 @@
+# 使用 release 模式减少导出符号数，避免 "export ordinal too large"
+[target.x86_64-pc-windows-gnu]

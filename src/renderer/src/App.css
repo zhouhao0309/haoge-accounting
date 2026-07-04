@@ -1,0 +1,64 @@
+/* 浩哥记账 - 全局样式 */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', 'PingFang SC',
+    'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+#root {
+  height: 100vh;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #bfbfbf;
+}
+
+/* 金额样式 */
+.amount-positive {
+  color: #fa541c;
+  font-weight: 600;
+}
+
+/* 页面卡片 */
+.page-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+/* 统计数字 */
+.stat-number {
+  font-size: 32px;
+  font-weight: 700;
+  color: #FA8C16;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #8c8c8c;
+  margin-top: 4px;
+}
