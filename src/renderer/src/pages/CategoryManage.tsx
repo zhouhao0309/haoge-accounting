@@ -12,15 +12,18 @@ import {
   Space,
   Empty
 } from 'antd'
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
+import { PlusOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons'
 
 function CategoryManage(): JSX.Element {
   const [categories, setCategories] = useState<Category[]>([])
   const [subCategories, setSubCategories] = useState<Record<number, Category[]>>({})
   const [loading, setLoading] = useState(false)
-  const [modalVisible, setModalVisible] = useState(false)
+  const [addModalVisible, setAddModalVisible] = useState(false)
+  const [editModalVisible, setEditModalVisible] = useState(false)
   const [currentParent, setCurrentParent] = useState<Category | null>(null)
+  const [editingSub, setEditingSub] = useState<Category | null>(null)
   const [newName, setNewName] = useState('')
+  const [editName, setEditName] = useState('')
 
   useEffect(() => {
     loadCategories()
@@ -49,11 +52,25 @@ function CategoryManage(): JSX.Element {
     try {
       await api.addSubCategory(currentParent.id, newName.trim())
       message.success(`已添加 "${newName.trim()}"`)
-      setModalVisible(false)
+      setAddModalVisible(false)
       setNewName('')
       loadCategories()
     } catch (err) {
       message.error('添加失败')
+    }
+  }
+
+  const handleEditSub = async (): Promise<void> => {
+    if (!editingSub || !editName.trim()) return
+    try {
+      await api.updateSubCategory(editingSub.id, editName.trim())
+      message.success(`已修改为 "${editName.trim()}"`)
+      setEditModalVisible(false)
+      setEditingSub(null)
+      setEditName('')
+      loadCategories()
+    } catch (err) {
+      message.error('修改失败')
     }
   }
 
@@ -96,7 +113,14 @@ function CategoryManage(): JSX.Element {
                 closable={!sub.is_default}
                 onClose={() => handleDeleteSub(sub.id)}
                 color={sub.is_default ? 'default' : 'blue'}
+                style={{ cursor: sub.is_default ? 'default' : 'pointer' }}
+                onClick={sub.is_default ? undefined : () => {
+                  setEditingSub(sub)
+                  setEditName(sub.name)
+                  setEditModalVisible(true)
+                }}
               >
+                {!sub.is_default && <EditOutlined style={{ marginRight: 4, fontSize: 11 }} />}
                 {sub.name}
               </Tag>
             ))}
@@ -106,7 +130,7 @@ function CategoryManage(): JSX.Element {
               icon={<PlusOutlined />}
               onClick={() => {
                 setCurrentParent(record)
-                setModalVisible(true)
+                setAddModalVisible(true)
               }}
             >
               添加
@@ -120,7 +144,7 @@ function CategoryManage(): JSX.Element {
   return (
     <Card className="page-card" title="分类管理">
       <p style={{ color: '#8c8c8c', marginBottom: 16 }}>
-        💡 系统内置分类不可删除；你可以在一级分类下添加自定义二级分类。
+        💡 系统内置分类（灰色标签）不可修改或删除；自定义分类（蓝色标签）可点击编辑、可删除。
       </p>
       <Table
         dataSource={categories}
@@ -132,10 +156,10 @@ function CategoryManage(): JSX.Element {
 
       <Modal
         title={`为 "${currentParent?.name}" 添加二级分类`}
-        open={modalVisible}
+        open={addModalVisible}
         onOk={handleAddSub}
         onCancel={() => {
-          setModalVisible(false)
+          setAddModalVisible(false)
           setNewName('')
         }}
         okText="添加"
@@ -147,6 +171,27 @@ function CategoryManage(): JSX.Element {
           onChange={(e) => setNewName(e.target.value)}
           maxLength={20}
           onPressEnter={handleAddSub}
+        />
+      </Modal>
+
+      <Modal
+        title="修改分类名称"
+        open={editModalVisible}
+        onOk={handleEditSub}
+        onCancel={() => {
+          setEditModalVisible(false)
+          setEditingSub(null)
+          setEditName('')
+        }}
+        okText="保存"
+        cancelText="取消"
+      >
+        <Input
+          placeholder="输入新名称"
+          value={editName}
+          onChange={(e) => setEditName(e.target.value)}
+          maxLength={20}
+          onPressEnter={handleEditSub}
         />
       </Modal>
     </Card>

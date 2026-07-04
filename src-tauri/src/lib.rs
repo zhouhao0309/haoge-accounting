@@ -95,6 +95,19 @@ fn add_sub_category(state: State<DbState>, path: State<DataPath>, parent_id: i64
 }
 
 #[tauri::command]
+fn update_sub_category(state: State<DbState>, path: State<DataPath>, id: i64, name: String) -> Result<(), String> {
+    let mut d = state.0.lock().map_err(|e| e.to_string())?;
+    let cat = d.categories.iter().find(|c| c.id == id).ok_or("分类不存在")?;
+    if cat.is_default { return Err("系统内置分类不可修改".into()); }
+    let parent_id = cat.parent_id;
+    if d.categories.iter().any(|c| c.parent_id == parent_id && c.name == name && c.id != id) {
+        return Err(format!("分类\"{}\"已存在", name));
+    }
+    if let Some(c) = d.categories.iter_mut().find(|c| c.id == id) { c.name = name; }
+    save_data(&path.0, &d); Ok(())
+}
+
+#[tauri::command]
 fn delete_sub_category(state: State<DbState>, path: State<DataPath>, id: i64) -> Result<(), String> {
     let mut d = state.0.lock().map_err(|e| e.to_string())?;
     if let Some(c) = d.categories.iter().find(|c| c.id == id) { if c.is_default { return Err("系统内置分类不可删除".into()); } }
@@ -197,6 +210,6 @@ pub fn run() {
     tauri::Builder::default()
         .manage(DbState(Mutex::new(app_data))).manage(DataPath(data_path))
         .setup(|app| { if cfg!(debug_assertions) { app.handle().plugin(tauri_plugin_log::Builder::default().level(log::LevelFilter::Info).build())?; } Ok(()) })
-        .invoke_handler(tauri::generate_handler![get_categories, get_sub_categories, add_sub_category, delete_sub_category, add_expense, get_expenses, update_expense, delete_expense, get_monthly_summary, get_monthly_trend])
+        .invoke_handler(tauri::generate_handler![get_categories, get_sub_categories, add_sub_category, update_sub_category, delete_sub_category, add_expense, get_expenses, update_expense, delete_expense, get_monthly_summary, get_monthly_trend])
         .run(tauri::generate_context!()).expect("error while running tauri application");
 }

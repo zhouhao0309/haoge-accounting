@@ -27,6 +27,10 @@ export async function addSubCategory(parentId: number, name: string): Promise<Ca
   return safeInvoke<Category>('add_sub_category', { parentId, name })
 }
 
+export async function updateSubCategory(id: number, name: string): Promise<void> {
+  return safeInvoke('update_sub_category', { id, name })
+}
+
 export async function deleteSubCategory(id: number): Promise<void> {
   return safeInvoke('delete_sub_category', { id })
 }
